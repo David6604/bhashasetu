@@ -60,7 +60,7 @@ export interface TranslateResponse {
 export async function translateText(
   payload: TranslateRequest,
 ): Promise<TranslateResponse> {
-  const { data } = await api.post<TranslateResponse>('/translate', payload)
+  const { data } = await api.post<TranslateResponse>('/api/translate', payload)
   return data
 }
 
