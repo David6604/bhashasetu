@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.*
+venv/
+__pycache__/
+*.pyc
+*.log
+desktop.ini

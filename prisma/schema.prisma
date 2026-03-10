@@ -1,0 +1,60 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(USER)
+  createdAt     DateTime @default(now())
+  translations  Translation[]
+  voiceTrans   VoiceTranslation[]
+  apiKey        ApiKey?
+}
+
+model ApiKey {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Translation {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  sourceLang       String
+  detectedSourceLang String?
+  targetLang       String
+  sourceText       String
+  translatedText   String
+  createdAt        DateTime @default(now())
+}
+
+model VoiceTranslation {
+  id                 String   @id @default(uuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  sourceLang         String
+  detectedSourceLang String?
+  targetLang         String
+  sourceAudioPath    String
+  sourceText         String
+  translatedText     String
+  translatedAudioPath String
+  createdAt          DateTime @default(now())
+}

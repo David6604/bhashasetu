@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pydantic
+torch
+transformers>=4.30.0
+whisper
+slowapi
+aioredis
+aiofiles
+langdetect

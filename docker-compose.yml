@@ -1,0 +1,83 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: translator
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  gateway:
+    build: ./server
+    env_file:
+      - ./server/.env.example
+    depends_on:
+      - db
+      - redis
+      - python
+    ports:
+      - "3000:3000"
+
+  python:
+    build: ./python_service
+    env_file:
+      - ./python_service/.env.example
+    depends_on:
+      - redis
+      - db
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: translator
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  gateway:
+    build: ./server
+    env_file:
+      - ./server/.env.example
+    depends_on:
+      - db
+      - redis
+      - python
+    ports:
+      - "3000:3000"
+
+  python:
+    build: ./python_service
+    env_file:
+      - ./python_service/.env.example
+    depends_on:
+      - redis
+      - db
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
