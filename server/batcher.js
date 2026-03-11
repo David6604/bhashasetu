@@ -4,6 +4,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const HF_TRANSLATE_URL =
+  "https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600M";
+
+const HF_HEADERS = {
+  Authorization: `Bearer ${process.env.HF_API_KEY}`,
+  "Content-Type": "application/json",
+};
+
 let pending = [];
 let timer = null;
 const BATCH_WINDOW_MS = 50;
@@ -16,11 +24,7 @@ export async function batchTranslate(req, res) {
   // ---- Language auto‑detection (if sourceLang missing) ----
   if (!req.body.sourceLang) {
     const textToDetect = req.body.text || (Array.isArray(req.body.texts) ? req.body.texts[0] : "");
-    const detectResp = await fetch(`${process.env.PYTHON_SERVICE_URL}/detect-language`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: textToDetect }),
-    });
+   req.body.sourceLang = req.body.sourceLang || "eng_Latn";
     if (!detectResp.ok) {
       const err = await detectResp.json();
       return res.status(400).json({ error: "DETECTION_ERROR", message: err.message });
@@ -41,12 +45,30 @@ export async function batchTranslate(req, res) {
       const { sourceLang, targetLang } = batch[0].req.body;
       const texts = batch.map((p) => p.req.body.text || p.req.body.texts).flat();
 
-      const pyResp = await fetch(`${process.env.PYTHON_SERVICE_URL}/translate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sourceLang, targetLang, texts }),
-      });
-      const data = await pyResp.json();
+      const translations = [];
+
+for (const text of texts) {
+  const resp = await fetch(HF_TRANSLATE_URL, {
+    method: "POST",
+    headers: HF_HEADERS,
+    body: JSON.stringify({
+      inputs: text,
+      parameters: {
+        src_lang: sourceLang,
+        tgt_lang: targetLang,
+      },
+    }),
+  });
+
+  const result = await resp.json();
+
+  translations.push({
+    original: text,
+    translated: result?.[0]?.translation_text || "",
+  });
+}
+
+const data = { translations };
 
       // Distribute results and persist each translation
       let idx = 0;
