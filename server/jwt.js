@@ -4,6 +4,11 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET || "change_this_secret";
 
 export function verifyJWT(req, res, next) {
+// allow public translate endpoint
+if (req.path === "/api/translate") {
+  return next();
+}
+
   const authHeader = req.headers["authorization"];
   if (!authHeader) {
     return res.status(401).json({ error: "UNAUTHORIZED", message: "Missing Authorization header" });
