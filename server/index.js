@@ -42,13 +42,14 @@ app.use(
 // ------------------------------------------------------------------
 app.use("/api/auth", authRouter);
 
+/* ---------- Text translation (single & batch) ---------- */
+app.post("/api/translate", batchTranslate);
+
 // ------------------------------------------------------------------
 // JWT middleware – protects everything after this point
 // ------------------------------------------------------------------
-app.use(verifyJWT);
+app.use("/api", verifyJWT);
 
-/* ---------- Text translation (single & batch) ---------- */
-app.post("/api/translate", batchTranslate);
 
 /* ---------- Voice translation ---------- */
 import multer from "multer";
