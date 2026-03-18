@@ -154,7 +154,7 @@ app.get("/api/translations", async (req, res) => {
   });
 });
 
-app.use("/", openapiRouter);
+app.use("/docs", openapiRouter);
 
 app.get("/health", (_, res) => res.json({ status: "ok" }));
 
