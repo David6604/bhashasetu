@@ -25,7 +25,20 @@ import * as broadcastManager from "./broadcastManager.js";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://bhashasetu.vercel.app",
+    "https://bhashasetu-rosy.vercel.app"
+  ],
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"],
+  credentials: true
+}));
+
+app.options("*", cors());
 app.use(helmet());
 app.use(express.json({ limit: "1mb" }));
 app.use(
