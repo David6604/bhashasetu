@@ -10,9 +10,9 @@ import axios, { type AxiosError } from 'axios'
 // In production, set VITE_API_URL to your deployed API gateway URL.
 
 const api = axios.create({
-  baseURL: "https://bhashasetu.onrender.com",
+  baseURL: "https://bhashasetu-api.onrender.com",
   headers: { 'Content-Type': 'application/json' },
-  timeout: 30_000,
+  timeout: 30000,
 })
 
 // ─── Request interceptor (auth headers, logging, etc.) ───────────────────────
