@@ -61,8 +61,10 @@ app.post("/api/translate", batchTranslate);
 // ------------------------------------------------------------------
 // JWT middleware – protects everything after this point
 // ------------------------------------------------------------------
-app.use("/api", verifyJWT);
-
+app.use("/api", (req, res, next) => {
+  if (req.path == "/translate") return next();
+  return verifyJWT(req, res, next);
+});
 
 /* ---------- Voice translation ---------- */
 import multer from "multer";
