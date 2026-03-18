@@ -351,5 +351,7 @@ wss.on("connection", (ws, request) => {
   });
 });
 
-const PORT = process.env.PORT ?? 3000;
-httpServer.listen(PORT, () => console.log(`🚀 Gateway listening on ${PORT}`));
+const PORT = process.env.PORT || 10000;
+httpServer.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Gateway listening on ${PORT}`);
+});
