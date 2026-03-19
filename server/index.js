@@ -54,17 +54,12 @@ app.use(
 // Public auth routes (no JWT required)
 // ------------------------------------------------------------------
 app.use("/api/auth", authRouter);
-
-/* ---------- Text translation (single & batch) ---------- */
 app.post("/api/translate", batchTranslate);
 
 // ------------------------------------------------------------------
-// JWT middleware – protects everything after this point
+// Protected routes (JWT required)
 // ------------------------------------------------------------------
-app.use("/api", (req, res, next) => {
-  if (req.path == "/translate") return next();
-  return verifyJWT(req, res, next);
-});
+app.use("/api", verifyJWT);
 
 /* ---------- Voice translation ---------- */
 import multer from "multer";
